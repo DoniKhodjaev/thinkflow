@@ -3,21 +3,28 @@
  * Caches app shell for offline use
  */
 
-const CACHE_NAME = 'thinkflow-v5';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/app.css',
-  '/js/app.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+const CACHE_NAME = 'thinkflow-v6';
+
+// Install — cache app shell (use relative paths for GitHub Pages subdirectory)
+// We build absolute URLs from the SW's own location
+const SW_DIR = self.registration.scope;
+const ASSET_PATHS = [
+  '',
+  'index.html',
+  'css/app.css',
+  'js/app.js',
+  'manifest.json',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
 ];
 
 // Install — cache app shell
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      const urls = ASSET_PATHS.map(p => new URL(p, self.registration.scope).href);
+      return cache.addAll(urls);
+    })
   );
   self.skipWaiting();
 });
